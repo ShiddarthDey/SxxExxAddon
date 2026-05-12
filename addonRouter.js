@@ -7,19 +7,19 @@ const demoSeriesMeta = {
   description: 'Demo series that provides SxxExx episodes for testing Continue Watching.',
   videos: [
     {
-      id: 'sxex:demo:s01e01',
+      id: 'sxex:demo:1:1',
       title: 'Episode 1',
       season: 1,
       episode: 1
     },
     {
-      id: 'sxex:demo:s01e02',
+      id: 'sxex:demo:1:2',
       title: 'Episode 2',
       season: 1,
       episode: 2
     },
     {
-      id: 'sxex:demo:s01e03',
+      id: 'sxex:demo:1:3',
       title: 'Episode 3',
       season: 1,
       episode: 3
@@ -109,6 +109,7 @@ function buildManifest(baseUrl) {
     description: 'Demo addon that exposes a series with SxxExx episodes.',
     resources: ['catalog', 'meta', 'stream'],
     types: ['series'],
+    idPrefixes: ['sxex:'],
     catalogs: [
       {
         type: 'series',

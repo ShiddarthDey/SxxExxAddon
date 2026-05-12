@@ -5,6 +5,8 @@ const demoSeriesMeta = {
   type: 'series',
   name: 'SxEx Demo Series',
   description: 'Demo series that provides SxxExx episodes for testing Continue Watching.',
+  poster: 'https://placehold.co/600x900/png?text=SxEx%20Demo',
+  background: 'https://placehold.co/1280x720/png?text=SxEx%20Demo',
   videos: [
     {
       id: 'sxex:demo:1:1',
@@ -29,6 +31,8 @@ const demoSeriesMeta = {
 
 const demoStreamUrl =
   'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
+
+const demoMp4Url = 'https://filesamples.com/samples/video/mp4/sample_640x360.mp4'
 
 function jsonResponse(body, statusCode = 200, extraHeaders = {}) {
   return {
@@ -161,8 +165,16 @@ function handleStream({ type, id }) {
     streams: [
       {
         name: 'Demo',
-        title: 'Big Buck Bunny (demo stream)',
+        title: 'HLS (web + android)',
         url: demoStreamUrl,
+        behaviorHints: {
+          bingeGroup: DEMO_SERIES_ID
+        }
+      },
+      {
+        name: 'Demo',
+        title: 'MP4 fallback',
+        url: demoMp4Url,
         behaviorHints: {
           bingeGroup: DEMO_SERIES_ID
         }

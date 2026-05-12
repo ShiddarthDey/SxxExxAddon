@@ -1,0 +1,24 @@
+[[redirects]]
+from = "/manifest.json"
+to = "/.netlify/functions/addon/manifest.json"
+status = 200
+force = true
+
+[[redirects]]
+from = "/catalog/*"
+to = "/.netlify/functions/addon/catalog/:splat"
+status = 200
+force = true
+
+[[redirects]]
+from = "/meta/*"
+to = "/.netlify/functions/addon/meta/:splat"
+status = 200
+force = true
+
+[[redirects]]
+from = "/stream/*"
+to = "/.netlify/functions/addon/stream/:splat"
+status = 200
+force = true
+

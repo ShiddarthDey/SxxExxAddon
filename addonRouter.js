@@ -28,7 +28,7 @@ const demoSeriesMeta = {
 }
 
 const demoStreamUrl =
-  'https://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_30fps_normal.mp4'
+  'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'
 
 function jsonResponse(body, statusCode = 200, extraHeaders = {}) {
   return {
@@ -66,10 +66,24 @@ function parseStremioPath(pathname) {
   const parts = cleaned.split('/').filter(Boolean)
   if (parts.length === 1 && parts[0] === 'manifest.json') return { kind: 'manifest' }
 
-  if (parts.length === 3 && parts[0] === 'catalog') {
-    const [_, type, idFile] = parts
-    const id = idFile.endsWith('.json') ? idFile.slice(0, -5) : idFile
-    return { kind: 'catalog', type, id }
+  if (parts.length >= 3 && parts[0] === 'catalog') {
+    const type = parts[1]
+    const idPart = parts[2]
+    const id = idPart.endsWith('.json') ? idPart.slice(0, -5) : idPart
+    const extraFile =
+      !idPart.endsWith('.json') && parts.length >= 4 ? parts.slice(3).join('/') : ''
+
+    const extraQuery = {}
+    if (extraFile) {
+      const raw = extraFile.endsWith('.json') ? extraFile.slice(0, -5) : extraFile
+      const decoded = decodeURIComponent(raw)
+      const params = new URLSearchParams(decoded)
+      params.forEach((value, key) => {
+        extraQuery[key] = value
+      })
+    }
+
+    return { kind: 'catalog', type, id, extraQuery }
   }
 
   if (parts.length === 3 && parts[0] === 'meta') {
@@ -100,7 +114,10 @@ function buildManifest(baseUrl) {
         type: 'series',
         id: 'sxex',
         name: 'SxEx',
-        extra: [{ name: 'search', isRequired: false }]
+        extra: [
+          { name: 'search', isRequired: false },
+          { name: 'skip', isRequired: false }
+        ]
       }
     ],
     behaviorHints: {
@@ -159,7 +176,12 @@ function routeRequest({ method, pathname, query, baseUrl }) {
   const parsed = parseStremioPath(pathname)
   if (parsed.kind === 'root') return jsonResponse(buildManifest(baseUrl))
   if (parsed.kind === 'manifest') return jsonResponse(buildManifest(baseUrl))
-  if (parsed.kind === 'catalog') return handleCatalog({ ...parsed, query })
+  if (parsed.kind === 'catalog') {
+    return handleCatalog({
+      ...parsed,
+      query: { ...(query || {}), ...(parsed.extraQuery || {}) }
+    })
+  }
   if (parsed.kind === 'meta') return handleMeta(parsed)
   if (parsed.kind === 'stream') return handleStream(parsed)
 
@@ -169,4 +191,3 @@ function routeRequest({ method, pathname, query, baseUrl }) {
 module.exports = {
   routeRequest
 }
-
